@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+langchain
+langgraph
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+pydantic # For FastAPI models and tool schemas
+python-dateutil
