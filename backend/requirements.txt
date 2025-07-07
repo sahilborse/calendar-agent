@@ -8,7 +8,6 @@ google-auth-httplib2
 google-auth-oauthlib
 pydantic # For FastAPI models and tool schemas
 python-dateutil
-googleapiclient
 pydantic_settings
 langchain_core
 typing
