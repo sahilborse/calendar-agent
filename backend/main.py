@@ -52,7 +52,6 @@ def call_model_final(prompt):
     # response = llm_with_tools.invoke("Create a summary to this data and show it for easy understanding"+str(messages))
     response = llm.invoke(f"Show the provided data in more general and understandable form with covering each content from the data if htmlLink are present show them also don't provide observations and understanding headings or quotes:\n{prompt}")
     # return {"messages": messages + [response]}
-    print("\n\n response:")
     return response.content  # Add a key for the end node to use
     
 @app.post("/chat", response_model=ChatResponse)
@@ -79,7 +78,7 @@ async def chat_endpoint(request: ChatRequest):
             # The last message in the stream should be the AI's final response or tool output
             # We want the actual AI message for the final response
             for key, value in s.items():
-                print("\nkey: ",key, "\nvalue:",value)
+                # print("\nkey: ",key, "\nvalue:",value)
                 if key == "agent" and value and value['messages']:
                     last_msg = value['messages'][-1]
                     if isinstance(last_msg, AIMessage) and not last_msg.tool_calls:

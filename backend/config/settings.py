@@ -10,7 +10,4 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()
-# print("Settings loaded successfully:")
-# print(f"GEMINI_API_KEY: {settings.GEMINI_API_KEY}")
-# print(f"GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON: {settings.GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON}")
-# print(f"CALENDAR_ID: {settings.CALENDAR_ID}")
+# print("Google Calendar Service Account JSON:", settings.GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON)
