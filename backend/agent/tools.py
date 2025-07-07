@@ -10,8 +10,7 @@ from config.settings import settings
 
 # --- Google Calendar Setup ---
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-# This will be loaded from environment variable in production
-# For local dev, ensure GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON is set in .env
+
 SERVICE_ACCOUNT_INFO = settings.GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON
 
 def get_calendar_service():
@@ -32,14 +31,12 @@ def get_calendar_service():
         print(f"Error initializing Google Calendar service: {e}")
         raise
 
-# --- Pydantic Schemas for Tools (for LLM function calling) ---
 
 class CreateEventSchema(BaseModel):
     summary: str = Field(description="Title or summary of the calendar event.")
     start_time: str = Field(description="Start datetime of the event in ISO 8601 format (e.g., '2025-07-05T10:00:00').")
     end_time: str = Field(description="End datetime of the event in ISO 8601 format (e.g., '2025-07-05T11:00:00').")
     description: Optional[str] = Field(None, description="Optional description for the event.")
-    # attendees: Optional[List[str]] = Field(None, description="Optional list of attendee emails.")
 
 class CheckAvailabilitySchema(BaseModel):
     start_time: str = Field(description="Start datetime for availability check in ISO 8601 format.")
@@ -78,9 +75,7 @@ def check_calendar_availability(start_time: str, end_time: str) -> Dict:
     service = get_calendar_service()
    
     
-    # Adjust timezone if necessary for precise availability checks
-    # current_timezone = 'Asia/Kolkata' # This should match your calendar's timezone settings
-    
+ 
     body = {
         "timeMin": start_time +"Z",
         "timeMax": end_time+"Z",
@@ -99,8 +94,6 @@ def check_calendar_availability(start_time: str, end_time: str) -> Dict:
         print("check availability error",error)
         return {"status": "error", "message": f"Failed to check availability: {error.content.decode('utf-8')}"}
 
-# Add more tools as needed (e.g., list_events, update_event, delete_event)
-# Example: List events for a period
 class ListEventsSchema(BaseModel):
     time_min: Optional[str] = Field(None, description="Start datetime for listing events in ISO 8601 format. Defaults to now.")
     time_max: Optional[str] = Field(None, description="End datetime for listing events in ISO 8601 format. Defaults to 7 days from now.")
@@ -154,7 +147,6 @@ tools = [
     list_calendar_events
 ]
 
-# Map Pydantic schemas to tools for LLM
 tool_schemas = {
     "create_calendar_event": CreateEventSchema,
     "check_calendar_availability": CheckAvailabilitySchema,

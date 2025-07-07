@@ -13,17 +13,14 @@ from agent.tools import tools, tool_schemas, create_calendar_event, check_calend
 from agent.state import AgentState
 from config.settings import settings
 
-# Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash", # or "gemini-1.5-pro", "gemini-1.5-flash"
+    model="gemini-2.0-flash", 
     temperature=0.7,
     google_api_key=settings.GEMINI_API_KEY
 )
 
-# Bind tools to LLM
 llm_with_tools = llm.bind_tools(tools)
 
-# Define the Agent Node
 def call_model(state: AgentState):
     messages = state['messages']
     response = llm_with_tools.invoke(messages)
@@ -65,12 +62,9 @@ def call_tool(state: AgentState):
 
 # Define graph
 workflow = StateGraph(AgentState)
-
-# Define nodes
 workflow.add_node("agent", call_model)
 workflow.add_node("tool", call_tool)
 
-# workflow.add_node("end", lambda state: {"messages": [AIMessage(content=state.get('summary', 'No summary'))]})
 # Define edges
 workflow.add_edge("agent", "tool") # Agent always tries to call a tool if available
 # workflow.add_edge("end", END)
@@ -90,7 +84,7 @@ workflow.add_conditional_edges(
     "tool",
     should_continue,
     {
-        "continue_tool_execution": "agent", # Tool executed, let agent respond
+        "continue_tool_execution": "agent",
         "summarize_and_end": END
     }
 )
@@ -100,16 +94,3 @@ workflow.set_entry_point("agent")
 # workflow.set_finish_point("end")
 graph = workflow.compile()
 
-# Example usage (for testing purposes, remove in final FastAPI)
-# if __name__ == "__main__":
-#     from langchain_core.messages import HumanMessage
-#     # Dummy API key for local testing graph compile (replace with your actual key)
-#     settings.GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key")
-#     settings.GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON", "{}")
-#     settings.CALENDAR_ID = os.environ.get("CALENDAR_ID", "primary")
-
-#     # Initialize the graph with a state
-#     initial_state = AgentState(messages=[HumanMessage(content="Schedule a meeting for tomorrow at 3 PM for 1 hour, topic is 'Project Sync'")], booking_details={}, calendar_id=settings.CALENDAR_ID)
-    
-#     for s in graph.stream(initial_state):
-#         print(s)
