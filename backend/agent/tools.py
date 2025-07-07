@@ -21,7 +21,7 @@ def get_calendar_service():
     try:
        
         info_dict = json.loads(SERVICE_ACCOUNT_INFO)
-        print("info_dict", info_dict)
+       
         credentials = service_account.Credentials.from_service_account_info(
             info_dict, scopes=SCOPES
         )
